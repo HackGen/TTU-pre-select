@@ -1,0 +1,164 @@
+
+//"use strict";
+var http = require("http");
+var fs = require('fs');
+var $ = require('jquery'); 
+var depnum ="04";
+var ID='D';
+var Dp ={
+	Depart : [{ID: "08", word: "A"},
+		 {ID: "05", word: "B"},
+		 {ID: "03", word: "C"},
+		 {ID: "04", word: "D"},
+		 {ID: "02", word: "E"},
+		 {ID: "06", word: "I"},
+		 {ID: "17", word: "K"},
+		 {ID: "15", word: "L"},
+		 {ID: "01", word: "M"},
+		 {ID: "12", word: "N"},
+		 {ID: "11", word: "O"},
+		 {ID: "18", word: "P"},
+		 {ID: "16", word: "Q"},
+		 {ID: "13", word: "R"},
+		 {ID: "09", word: "S"}]
+	};
+
+var pageProc = function(option){
+	
+
+	var req = http.request(option, function(res) {
+			var size = 0;
+		    	var chunks = [];
+		    	res.on('data',function(chunk) {
+
+			      size += chunk.length;
+			      chunks.push(chunk);
+		    	});
+			res.on('end', function(){
+			      var data = Buffer .concat ( chunks , size ) ; 
+			      var filename = option.name;
+			      //option.path.toString().substr(26,28);
+			      var dom = $(data.toString()).find('form').html();
+			      if(typeof(dom) === "undefined"){
+			      	 dom = $(data.toString()).find('table.cistab').html();
+			      	 console.log(11111);
+			      }
+			      // 一二三四五六七八九
+			      console.log(dom);
+			      	while(dom.search("一")>0||dom.search("二")>0||dom.search("三")>0||dom.search("四")>0||dom.search("五")>0
+			      	||dom.search("六")>0||dom.search("七")>0||dom.search("八")>0||dom.search("九")>0){
+				      dom = dom.toString().replace("一","1");
+				      dom = dom.toString().replace("二","2");
+				      dom = dom.toString().replace("三","3");
+				      dom = dom.toString().replace("四","4");
+				      dom = dom.toString().replace("五","5");
+				      dom = dom.toString().replace("六","6");
+				      dom = dom.toString().replace("七","7");
+				      dom = dom.toString().replace("八","8");
+				      dom = dom.toString().replace("九","9");
+			  	}
+			  	
+			  	while(dom.search("星期")>0||dom.search("第")>0||dom.search("節")>0||dom.search("中　午")>0||dom.search("傍 晚")>0){
+			  		dom = dom.toString().replace("星期"," ");
+			  		dom = dom.toString().replace("第"," ");
+			  		dom = dom.toString().replace("節"," ");
+			  		dom = dom.toString().replace("中　午","0");
+			  		dom = dom.toString().replace("傍　晚","-1");
+			  	}
+			  	while(dom.search("授課時數")>0||dom.search("實習時數")>0){
+			  		dom = dom.toString().replace("實習時數","Teachtime");
+			  		dom = dom.toString().replace("授課時數","Teachtime");
+			  	}
+			if($(data.toString()).find('h2').text() != "無該班課程資料"){
+					// console.log($(dom.toString()).find );
+				      fs.writeFile(filename+'.html',dom,function(err){
+				      	if(err){
+				      		console.log(err);
+				      	}else{
+				      		console.log(filename+"saved over");
+				      	}
+				      });
+			  	}
+			});
+	});
+
+
+	req.on('error', function(e) {
+	console.log('problem with request: ' + e.message);
+	});
+	req.end();
+};
+
+
+var options = {};
+var info = [];
+var startWork= function(){
+
+		var i;
+
+		for (i = 0,k=0; i < 15; i++ )  {
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'1A',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'1B',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'2A',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'2B',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'3A',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'3B',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'4B',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+			info.push({
+		  			hostname: 'selquery.ttu.edu.tw',
+		  			path: '/Main/ListClass.php?SelDp='+Dp.Depart[i].ID+'&SelCl=U'+Dp.Depart[i].word+'4B',
+		  			method: 'POST',
+		  			name: (k+=1).toString()
+				});
+		};
+		info.push({
+	  			hostname: 'selquery.ttu.edu.tw',
+	  			path: "/Main/ListGeneral.php",
+	  			// method: 'POST',
+	  			name: (k+=1).toString()
+			});
+
+		// for ( i=info.length; i > 0;i--){
+		// 	pageProc(info[i-1]);
+		// }
+		pageProc(info[120]);
+	};
+startWork();
+// exports.startWork = function(){
+// 	startWork();
+// }
